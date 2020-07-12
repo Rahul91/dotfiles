@@ -24,10 +24,12 @@ set encoding=utf-8
 set cmdheight=2
 set updatetime=50
 set shortmess+=c
-set splitright
 set clipboard=unnamed
 set cc=120
 set diffopt+=vertical
+set ic
+set viminfo='100,f1
+set ttyfast
 
 let mapleader = ","
 imap jj <Esc>
@@ -42,8 +44,12 @@ nnoremap E $
 nnoremap $ <nop>
 nnoremap ^ <nop>
 
+" Mapping ctlr-c to put in insert  mod.
+nnoremap <c-c> i
+
 call plug#begin('~/.vim/plugged')
 
+Plug 'preservim/nerdcommenter'
 Plug 'jremmen/vim-ripgrep'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
@@ -54,8 +60,8 @@ Plug 'vim-airline/vim-airline'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'preservim/nerdtree'
 Plug 'davidhalter/jedi-vim'
-Plug '907th/vim-auto-save'
 Plug 'heavenshell/vim-pydocstring', { 'do': 'make install' }
+Plug 'JamshedVesuna/vim-markdown-preview'
 
 call plug#end()
 
@@ -70,6 +76,12 @@ endif
 " use the silver searcher
  let g:agprg="ag -i --vimgrep"
  let g:ag_highlight=1
+
+" NerdCommenter.
+let g:NERDSpaceDelims = 1
+
+" Md preview
+let vim_markdown_preview_hotkey='<C-g>'
 
 " ripgrep and fzf
 command! -bang -nargs=* F
@@ -87,13 +99,12 @@ highlight GitGutterChange ctermfg=yellow
 highlight GitGutterDelete ctermfg=red
 highlight GitGutterChangeDelete ctermfg=yellow
 
-
 " Jedi Options
 " let g:jedi#use_tabs_not_buffers = 1
 
 " Toggle NERDTreeToggle
 map <C-n> :NERDTreeToggle<CR>
-map <leader>r :NERDTreeFind<cr>
+nnoremap <Leader>m :NERDTreeFind<cr>
 let NERDTreeIgnore=['\.pyc$', '\~$'] "ignore files in NERDTree
 
 " Use tab for trigger completion with characters ahead and navigate.
@@ -128,7 +139,6 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 " Symbol renaming.
 nmap <leader>rn <Plug>(coc-rename)
 
-
 " Add `:Format` command to format current buffer.
 command! -nargs=0 Fmt  :call CocAction('format')
 
@@ -146,10 +156,7 @@ nnoremap <silent> <c-p> :GFiles<cr>
 nnoremap <silent> <c-o> :History<cr>
 nnoremap <silent> <c-f> :BLines<cr>
 inoremap <silent> <c-f> :BLines<cr>
-nnoremap <Leader>lb :Buffers<cr>
-nnoremap <Leader>m :NERDTreeFind<cr>
-nnoremap <Leader>+ :vertical resize +5<CR>
-nnoremap <Leader>- :vertical resize -5<CR>
+nnoremap <silent> <c-b> :Buffers<cr>
 
 filetype plugin indent on
 
@@ -161,13 +168,20 @@ au BufNewFile,BufRead *.py set tabstop=4 softtabstop=4 shiftwidth=4 textwidth=12
 let NERDTreeIgnore=['\.pyc$', '\~$'] "ignore files in NERDTree
 
 
-" For saving files
-let g:auto_save = 1
-let g:auto_save_events = ["InsertLeave", "TextChanged"]
+" For saving files.
+" let g:auto_save = 1
+" let g:auto_save_events = ["InsertLeave", "TextChanged"]
+
+noremap <silent> <C-S> :update<CR>
+vnoremap <silent> <C-S> <C-C>:update<CR>
+inoremap <silent> <C-S> <C-O>:update<CR>
 
 nnoremap  <silent>   <tab>  :if &modifiable && !&readonly && &modified <CR> :write<CR> :endif<CR>:bnext<CR>
 nnoremap  <silent> <s-tab>  :if &modifiable && !&readonly && &modified <CR> :write<CR> :endif<CR>:bprevious<CR>
-nnoremap <silent> <C-w>T :tab split<CR>
+
+" Map the <Space> key to toggle a selected fold opened/closed.
+nnoremap <silent> <Space> @=(foldlevel('.')?'za':"\<Space>")<CR>
+vnoremap <Space> zf
 
 fun! TrimWhitespace()
     let l:save = winsaveview()
@@ -180,3 +194,31 @@ autocmd BufWritePre * :call TrimWhitespace()
 " Pydoc
 let g:pydocstring_formatter = 'google'
 nmap <silent> <s-d> <Plug>(pydocstring)
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Splits and Tabbed Files
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set splitbelow splitright
+
+" Move between split windows
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
+" Make adjusing split sizes a bit more friendly
+noremap <silent> <C-Left> :vertical resize +3<CR>
+noremap <silent> <C-Right> :vertical resize -3<CR>
+noremap <silent> <C-Up> :resize +3<CR>
+noremap <silent> <C-Down> :resize -3<CR>
+
+nnoremap <Leader>t gt<cr>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Open terminal inside Vim
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <Leader>tt :term<CR>
+
+" Line move up and down.
+noremap <c-s-up> :call feedkeys( line('.')==1 ? '' : 'ddkP' )<CR>
+noremap <c-s-down> ddp
