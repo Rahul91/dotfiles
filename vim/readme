@@ -5,11 +5,14 @@ curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 
 Install fzf
 
-
 Install ripgrep
 
+
 Install jedi in the current venv
-pip install jedi
+    pip install jedi
 
 Inside vim editor:
-:CocInstall coc-json coc-python 
+:CocInstall coc-json coc-python coc-tabnine
+
+Insall coc-tabnine for autocompletion
+https://github.com/neoclide/coc-tabnine
