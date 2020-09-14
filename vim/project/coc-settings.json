@@ -1,0 +1,12 @@
+{
+  "python.pythonPath": "/home/rahul/.virtualenvs/healthifyme/bin/python",
+  "python.autoComplete.addBrackets": true,
+  "python.linting.flake8Enabled": true,
+  "python.linting.flake8Args": ["--ignore=W503,Q000", "--max-line-length=120"],
+  "python.linting.enabled": false,
+  "python.linting.lintOnSave": true,
+  "python.formatting.provider": "black",
+  "python.formatting.blackPath": "/home/rahul/.virtualenvs/py3/bin/black",
+  "python.formatting.blackArgs": ["--line-length", "120", "--skip-string-normalization"],
+  "python.linting.pylintEnabled": false
+}
