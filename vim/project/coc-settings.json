@@ -1,5 +1,5 @@
 {
-  "python.pythonPath": "/home/rahul/.virtualenvs/healthifyme/bin/python",
+  "python.pythonPath": "/home/rahul/.virtualenvs/venv/bin/python",
   "python.autoComplete.addBrackets": true,
   "python.linting.flake8Enabled": true,
   "python.linting.flake8Args": ["--ignore=W503,Q000", "--max-line-length=120"],
