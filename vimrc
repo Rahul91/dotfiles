@@ -26,12 +26,19 @@ set updatetime=50
 set shortmess+=c
 set clipboard=unnamed
 set cc=120
-set diffopt+=vertical
-set ic
-set viminfo='100,f1
+set modifiable
 set ttyfast
+set foldmethod=indent
+set foldlevel=99
+set guicursor=i:ver25-iCursor
 
-let mapleader = ","
+" Allow us to use Ctrl-s and Ctrl-q as keybinds
+silent !stty -ixon
+
+" Restore default behaviour when leaving Vim.
+autocmd VimLeave * silent !stty ixon
+
+let mapleader=","
 imap jj <Esc>
 nnoremap d "_d
 vnoremap d "_d
@@ -39,12 +46,10 @@ vnoremap d "_d
 " move to beginning/end of line
 nnoremap B ^
 nnoremap E $
+map <C-a> <ESC>^
+map <C-e> <ESC>$
 
-" $/^ doesn't do anything
-nnoremap $ <nop>
-nnoremap ^ <nop>
-
-" Mapping ctlr-c to put in insert  mod.
+" Mapping ctlr-c to put in insert mod.
 nnoremap <c-c> i
 
 call plug#begin('~/.vim/plugged')
@@ -59,15 +64,26 @@ Plug 'morhetz/gruvbox'
 Plug 'vim-airline/vim-airline'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'preservim/nerdtree'
-Plug 'davidhalter/jedi-vim'
+Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'heavenshell/vim-pydocstring', { 'do': 'make install' }
 Plug 'JamshedVesuna/vim-markdown-preview'
+Plug 'idanarye/vim-merginal'
+Plug 'moll/vim-bbye'
+Plug 'tmhedberg/SimpylFold'
+Plug 'tpope/vim-sensible'
+Plug 'psf/black', { 'branch': 'stable' }
+Plug 'jiangmiao/auto-pairs'
 
 call plug#end()
 
 " ColourScheme
 colorscheme gruvbox
 set background=dark
+
+" Set code folding shortcut with space.
+nnoremap <space> za
+let g:SimpylFold_docstring_preview=1
+
 
 if executable('rg')
     let g:rg_derive_root='true'
@@ -82,6 +98,25 @@ let g:NERDSpaceDelims = 1
 
 " Md preview
 let vim_markdown_preview_hotkey='<C-g>'
+
+" Black
+let g:black_linelength=120
+let g:black_skip_string_normalization=1
+let g:black_virtualenv="/Users/rahulmishra/.virtualenvs/py3/bin/black"
+
+" merginal
+nnoremap <leader>gm :MerginalToggle<CR>
+
+" fugitive
+nnoremap <Leader>ga :Git add %:p<CR><CR>
+nnoremap <Leader>gs :Gstatus<CR>
+nnoremap <leader>gl :silent! Glog<CR>:bot copen<CR>
+nnoremap <leader>gp :Ggrep<Space>
+nnoremap <leader>gb :Git branch<Space>
+nnoremap <leader>gco :Git checkout<Space>
+nnoremap <leader>gc :Git commit -am ""<Left>
+command! -bar -nargs=* Gpull execute 'Git pull'
+command! -bar -nargs=* Gpush execute 'Git push'
 
 " ripgrep and fzf
 command! -bang -nargs=* F
@@ -98,9 +133,6 @@ highlight GitGutterAdd ctermfg=green
 highlight GitGutterChange ctermfg=yellow
 highlight GitGutterDelete ctermfg=red
 highlight GitGutterChangeDelete ctermfg=yellow
-
-" Jedi Options
-" let g:jedi#use_tabs_not_buffers = 1
 
 " Toggle NERDTreeToggle
 map <C-n> :NERDTreeToggle<CR>
@@ -167,14 +199,12 @@ au BufNewFile,BufRead *.py set tabstop=4 softtabstop=4 shiftwidth=4 textwidth=12
 " NERDTree changes.
 let NERDTreeIgnore=['\.pyc$', '\~$'] "ignore files in NERDTree
 
-
-" For saving files.
-" let g:auto_save = 1
-" let g:auto_save_events = ["InsertLeave", "TextChanged"]
-
-noremap <silent> <C-S> :update<CR>
-vnoremap <silent> <C-S> <C-C>:update<CR>
-inoremap <silent> <C-S> <C-O>:update<CR>
+" Handy shortcut
+noremap <silent> <c-s> :update<CR>
+vnoremap <silent> <c-s> <c-c>:update<CR>
+inoremap <silent> <c-s> <c-o>:update<CR>
+inoremap <C-x> <esc>:wq!<cr>
+nnoremap <C-x> :wq!<cr>
 
 nnoremap  <silent>   <tab>  :if &modifiable && !&readonly && &modified <CR> :write<CR> :endif<CR>:bnext<CR>
 nnoremap  <silent> <s-tab>  :if &modifiable && !&readonly && &modified <CR> :write<CR> :endif<CR>:bprevious<CR>
@@ -197,7 +227,6 @@ nmap <silent> <s-d> <Plug>(pydocstring)
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Splits and Tabbed Files
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set splitbelow splitright
 
 " Move between split windows
